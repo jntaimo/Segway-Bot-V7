@@ -65,6 +65,7 @@
 #endif
 #define LedPin LED_BUILTIN
 
+
 // Components.
 VL53L4CX sensor_vl53l4cx_sat(&DEV_I2C, A1);
 
@@ -81,7 +82,7 @@ void setup()
 
   // Initialize I2C bus.
   DEV_I2C.begin();
-
+  
   // Configure VL53L4CX satellite component.
   sensor_vl53l4cx_sat.begin();
 
