@@ -5,6 +5,8 @@
 #include "pots.h"
 #include "util.h"
 
+//This code displays the potentiometer readings on the TFT disply
+//NOTE: Requires pots.cpp in the robot folder
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 
 void setup(){
