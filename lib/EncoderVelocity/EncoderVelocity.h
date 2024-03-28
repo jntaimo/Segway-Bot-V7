@@ -6,9 +6,10 @@
 //counts for gobilda motors
 //https://www.gobilda.com/yellow-jacket-planetary-gear-motors/
 // rounded to nearest int
-#define CPR_30_RPM 5282 // 5281.1 
-#define CPR_60_RPM 2786 // 2786.2
-#define CPR_312_RPM 538 // 537.7
+#define CPR_30_RPM 5281.1 // 5281.1 
+#define CPR_60_RPM 2786.2 // 2786.2
+#define CPR_312_RPM 537.7 // 537.7
+#define CPR_1620_RPM 103.8 // 103.1
 class EncoderVelocity {
 public:
   // Constructor: Initializes with the given pins and counts per revolution (CPR)
