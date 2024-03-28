@@ -6,54 +6,65 @@
 
 
 // Create an instance of the MotorDriver class
-MotorDriver motor(DIR1, PWM1, 0);
+MotorDriver motorL(DIR1, PWM1, 0);
+MotorDriver motorR(DIR2, PWM2, 1);
 
 void setup() {
     // Initialize serial communication
     Serial.begin();
 
     // Setup the motor driver
-    motor.setup();
+    motorL.setup();
+    motorR.setup();
 }
 
 void loop() {
     // Move the motor forward at full speed
     Serial.println("Moving Forward at full speed");
-    motor.drive(1.0); // 100% duty cycle
+    motorL.drive(1.0); // 100% duty cycle
+    motorR.drive(1.0); 
     delay(DELAY);
 
     // Stop the motor
     Serial.println("Stopping");
-    motor.drive(0.0); // 0% duty cycle
+    motorL.drive(0.0); // 0% duty cycle
+    motorR.drive(0.0);
     delay(DELAY);
 
     // Move the motor forward at half speed
     Serial.println("Moving Forward at half speed");
-    motor.drive(0.5); // 50% duty cycle
+    motorL.drive(0.5); // 50% duty cycle
+    motorR.drive(0.5);
     delay(DELAY);
 
     // Stop the motor
     Serial.println("Stopping");
-    motor.drive(0.0); // 0% duty cycle
+    motorL.drive(0.0); // 0% duty cycle
+    motorR.drive(0.0);
     delay(DELAY);
 
     // Move the motor backward at full speed
     Serial.println("Moving Backward at full speed");
-    motor.drive(-1.0); // -100% duty cycle (backward)
+    motorL.drive(-1.0); // -100% duty cycle (backward)
+    motorR.drive(-1.0);
     delay(DELAY);
 
     // Stop the motor
     Serial.println("Stopping");
-    motor.drive(0.0); // 0% duty cycle
+    motorL.drive(0.0); // 0% duty cycle
+    motorR.drive(0.0);
     delay(DELAY);
 
     // Move the motor backward at half speed
     Serial.println("Moving Backward at half speed");
-    motor.drive(-0.5); // -50% duty cycle (backward)
+    motorL.drive(-0.5); // -50% duty cycle (backward)
+    motorR.drive(-0.5);
     delay(DELAY);
 
     // Stop the motor
     Serial.println("Stopping");
-    motor.drive(0.0); // 0% duty cycle
+    motorL.drive(0.0); // 0% duty cycle
+    motorR.drive(0.0);
     delay(DELAY);
+
 }
