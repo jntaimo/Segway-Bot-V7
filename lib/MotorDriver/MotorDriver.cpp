@@ -19,7 +19,7 @@ void MotorDriver::setup() {
 
 void MotorDriver::drive(double dutyCycle) {
     // Constrain the duty cycle to valid range (-1.0 to 1.0)
-    dutyCycle = constrain(dutyCycle, -0.9999, 0.9999);
+    dutyCycle = constrain(dutyCycle, -0.999, 0.999);
 
     // Set the motor direction based on the sign of duty cycle
     digitalWrite(_dirPin, dutyCycle > 0);
