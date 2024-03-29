@@ -1,5 +1,5 @@
 #ifndef EVERY_N_MICROS_H
-#define EVERY_N_MILLIS_H
+#define EVERY_N_MICROS_H
 
 #include <Arduino.h>
 
@@ -22,7 +22,7 @@ private:
 
 #define CONCAT_INTERNAL(x, y) x##y
 #define CONCAT(x, y) CONCAT_INTERNAL(x, y)
-#define EVERY_N_Micros(N) \
+#define EVERY_N_MICROS(N) \
     static EveryNMicros CONCAT(everyNMicros_, __LINE__)(N); \
     if (CONCAT(everyNMicros_, __LINE__).shouldRun(micros()))
 
