@@ -52,7 +52,6 @@
 
     double error = _setpoint - input;               // Calculate error
     _integral += error * dt;                        // Integral term
-    _integral = constrain(_integral, _integralMin, _integralMax); // Prevent integral windup
 
     double derivative = (error - _previousError) / dt; // Derivative term
     
@@ -75,11 +74,10 @@
 
     double error = _setpoint - input;               // Calculate error
     _integral += error * dt;                        // Integral term
-    _integral = constrain(_integral, _integralMin, _integralMax); // Prevent integral windup
 
     // double output = _Kp * (error + _Ki * _integral + _Kd * derivative); // Calculate pseudo-parallel PID output
     
-    double output = _Kp * error + _Ki * _integral + _Kd * derivative; // Calculate true parallel PID output
+    double output = _Kp * error + constrain(_Ki * _integral, _integralMin, _integralMax) + _Kd * derivative; // Calculate true parallel PID output
     _previousError = error;
 
     return output;
