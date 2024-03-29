@@ -5,7 +5,7 @@
 #include "display.h"
 
 #define NUM_POTS 4
-#define POT_THRESHOLD 3
+#define POT_THRESHOLD 1
 #define NUM_OVERSAMPLE_BITS 6
 #define FLIP_POTS
 const int samples = 1 << NUM_OVERSAMPLE_BITS; // Number of samples for oversampling

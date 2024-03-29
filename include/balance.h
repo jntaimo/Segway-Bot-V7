@@ -5,10 +5,10 @@
 #define MAX_KP 20.0
 
 #define MIN_KI 0.0
-#define MAX_KI 10.0
+#define MAX_KI 200.0
 
 #define MIN_KD 0.0
-#define MAX_KD 10.0
+#define MAX_KD 3.0
 
 #define MIN_TRIM -0.01 //degrees
 #define MAX_TRIM 0.01 //degrees
