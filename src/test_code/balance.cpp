@@ -11,6 +11,7 @@
 
 //whether the robot has fallen over
 bool bonked = false;
+
 //PID Parameters
 float balanceSetpoint = 0; //rad
 float motorLSetpoint = 0;  //rad/s
@@ -57,6 +58,7 @@ void setup(){
     potsSetup();
     leftMotor.setup();
     rightMotor.setup();
+
 }
 
 void loop(){

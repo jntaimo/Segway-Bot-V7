@@ -19,7 +19,6 @@ uint16_t oversampledRead(uint8_t pin) {
     for (int i = 0; i < samples; i++) {
         sum += analogRead(pin);
     }
-
     // Average the readings and increase resolution
     return sum >> NUM_OVERSAMPLE_BITS; // Division by factor of 2
 }
