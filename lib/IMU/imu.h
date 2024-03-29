@@ -6,7 +6,7 @@
 #include "EulerAngles.h"
 #include "EveryNMillis.h"
 //#include "TimerOne.h"
-
+#define IMU_DEBUG false
 class IMU {
 private:
     Adafruit_BNO08x  bno08x;
