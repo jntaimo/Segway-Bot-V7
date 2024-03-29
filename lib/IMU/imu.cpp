@@ -34,7 +34,8 @@ void IMU::setReports() {
         Serial.println("Could not enable gyroscope");
     }
 }
-
+//Actually read the values on the IMU
+//This should only be called when the IMU data is ready
 void IMU::readIMU() {
     if (bno08x.wasReset()) {
         Serial.print("sensor was reset ");
