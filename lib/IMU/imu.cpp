@@ -27,12 +27,12 @@ void IMU::setup() {
 
 void IMU::setReports() {
     if (IMU_DEBUG) Serial.println("Setting desired reports");
-    if (! bno08x.enableReport(SH2_GAME_ROTATION_VECTOR, 2500)) {
+    if (! bno08x.enableReport(SH2_GAME_ROTATION_VECTOR, 1000)) {
         if (IMU_DEBUG) Serial.println("Could not enable game vector");
     }
-    if (!bno08x.enableReport(SH2_GYROSCOPE_CALIBRATED, 1500)) {
-        if (IMU_DEBUG) Serial.println("Could not enable gyroscope");
-    }
+    // if (!bno08x.enableReport(SH2_GYROSCOPE_CALIBRATED, 1500)) {
+    //     if (IMU_DEBUG) Serial.println("Could not enable gyroscope");
+    // }
 }
 //Actually read the values on the IMU
 //This should only be called when the IMU data is ready

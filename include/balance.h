@@ -2,16 +2,16 @@
 #define WHEEL_RADIUS 0.06 // Wheel radius in meters
 
 #define MIN_KP 0.0
-#define MAX_KP 20.0
+#define MAX_KP 10.0
 
 #define MIN_KI 0.0
-#define MAX_KI 200.0
+#define MAX_KI 50.0
 
 #define MIN_KD 0.0
-#define MAX_KD 3.0
+#define MAX_KD 1.0
 
-#define MIN_TRIM -0.01 //degrees
-#define MAX_TRIM 0.01 //degrees
+#define MIN_TRIM -0.1 //degrees
+#define MAX_TRIM 0.1 //degrees
 
 #define MAX_CONTROLLER_TILT 10//degrees
 #define MAX_CONTROLLER_YAW 50//degrees/sec

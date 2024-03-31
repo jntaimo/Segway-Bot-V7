@@ -51,7 +51,13 @@
     _alpha = exp(-dt / _tau); // Calculate alpha for low-pass filter
 
     double error = _setpoint - input;               // Calculate error
-    _integral += error * dt;                        // Integral term
+    if (_Ki == 0) {
+      _integral = 0;
+    } else {
+      //make sure to cap integral accumulation
+      _integral += error * dt;
+      _integral = constrain(_integral, _integralMin/_Ki, _integralMax/_Ki);                // Integral term
+    }
 
     double derivative = (error - _previousError) / dt; // Derivative term
     
@@ -59,7 +65,7 @@
     _lastDerivative = derivative;
 
     // double output = _Kp * (error + _Ki * _integral + _Kd * derivative); // Calculate pseudo-parallel PID output
-    double output = _Kp * error + constrain(_Ki * _integral, _integralMin, _integralMax) + _Kd * derivative; // Calculate true parallel PID output
+    double output = _Kp * error + _Ki*_integral+ _Kd * derivative; // Calculate true parallel PID output
     _previousError = error;
 
     return output;

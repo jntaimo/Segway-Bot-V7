@@ -30,7 +30,7 @@ Gains motorGains({0, 0, 0, 0});
 Gains observerGains({0, 0, 0, 0});
 
 // PID controllers
-PID balancePID(balanceGains.kp, balanceGains.ki, balanceGains.kd, 0, 0.05, false);  
+PID balancePID(balanceGains.kp, balanceGains.ki, balanceGains.kd, 0, 0.01, false);  
 PID leftMotorPID(motorGains.kp, motorGains.ki, motorGains.kd, 0.0, 0.1, false); 
 PID rightMotorPID(observerGains.kp, observerGains.ki, observerGains.kd, 0.0, 0.1, false); 
 
@@ -48,8 +48,6 @@ IMU imu(IMU_RST, IMU_CS, IMU_INT);
 // TFT display object
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 
-//tft print buffer
-char buf[11];
 
 void setup(){
     Serial.begin();
@@ -58,9 +56,9 @@ void setup(){
     potsSetup();
     leftMotor.setup();
     rightMotor.setup();
-    tft.setTextWrap(false);
-    tft.setTextColor(ST77XX_WHITE, ST77XX_BLACK);
-    tft.setTextSize(2);
+    // tft.setTextWrap(false);
+    // tft.setTextColor(ST77XX_WHITE, ST77XX_BLACK);
+    // tft.setTextSize(2);
 
 }
 
@@ -75,7 +73,7 @@ void loop(){
         //update 
         bool newPotReading  = updatePIDParams(balanceGains);
         if (newPotReading){
-            balancePID.setParallelTunings(balanceGains.kp, balanceGains.ki, balanceGains.kd, 0.02, -0.5, 0.5);
+            balancePID.setParallelTunings(balanceGains.kp, balanceGains.ki, balanceGains.kd, 0.3, -2, 2);
         }
     }
 
@@ -84,18 +82,17 @@ void loop(){
         imu.update();
     }
     
-    // Update PID at 2kHz
+    // Update PID at 1Kz
     EVERY_N_MILLIS(1){
-        
         //read encoders
-        float leftPosition = leftEncoder.getPosition(); //rad
-        float rightPosition = -rightEncoder.getPosition(); //rad
-        float leftVelocity = leftEncoder.getVelocity(); //rad
-        float rightVelocity = -rightEncoder.getVelocity(); //rad
+        // float leftPosition = leftEncoder.getPosition(); //rad
+        // float rightPosition = -rightEncoder.getPosition(); //rad
+        // float leftVelocity = leftEncoder.getVelocity(); //rad
+        // float rightVelocity = -rightEncoder.getVelocity(); //rad
 
         //calculate control effort
         EulerAngles angles = imu.getEulerAngles();
-        GyroReadings gyro = imu.getGyroReadings();
+        // GyroReadings gyro = imu.getGyroReadings();
 
         float absoluteTiltAngle = angles.roll;
         float relativeTiltAngle = absoluteTiltAngle - balanceGains.trim;
@@ -110,8 +107,8 @@ void loop(){
             //don't update the PID controllers at all!
         }
         else{
-            balanceControlEffort = balancePID.calculateParallel(relativeTiltAngle, balanceSetpoint, -gyro.rollRate); //desired average motor speed
-            
+            // balanceControlEffort = balancePID.calculateParallel(relativeTiltAngle, balanceSetpoint, -gyro.rollRate); //desired average motor speed
+            balanceControlEffort = balancePID.calculateParallel(relativeTiltAngle, balanceSetpoint); //desired average motor speed
             //measure the average position so that that the observer can change the trim
             // float avergagePosition = (leftPosition + rightPosition) / 2;
             // observerControlEffort = rightMotorPID.calculateParallel(observerSetpoint, avergagePosition);//amount to change trim by
@@ -130,8 +127,8 @@ void loop(){
 
     // Print values at 10Hz
     EVERY_N_MILLIS(100) {
-        Serial.printf("kp: %.2f, ki: %.2f, kd: %.2f, trim: %.2f", balanceGains.kp, balanceGains.ki, balanceGains.kd, balanceGains.trim);
-        Serial.printf(" Setpoint: %.2f, Angle: %.2f, Control Effort: %.2f\n", balanceSetpoint, imu.getEulerAngles().roll*RAD_2_DEG, balanceControlEffort);
+        // Serial.printf("kp: %.2f, ki: %.2f, kd: %.2f, trim: %.2f", balanceGains.kp, balanceGains.ki, balanceGains.kd, balanceGains.trim);
+        // Serial.printf(" Setpoint: %.2f, Angle: %.2f, Control Effort: %.2f\n", balanceSetpoint, imu.getEulerAngles().roll*RAD_2_DEG, balanceControlEffort);
         // Print encoder readings
         // tft.setCursor(0, 0);
         // tft.println("Pot Readings");
