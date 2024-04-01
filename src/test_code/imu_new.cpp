@@ -1,7 +1,7 @@
 #include "imu_new.h"
 #include "display.h"
 
-#define PRINT_INTERVAL 200
+#define PRINT_INTERVAL 1
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 
 
@@ -39,7 +39,7 @@ void setReports(void) {
   if (! bno08x.enableReport(SH2_GAME_ROTATION_VECTOR, 1000)) {
     Serial.println("Could not enable game vector");
   }
-  // if (!bno08x.enableReport(SH2_GYROSCOPE_CALIBRATED, 100)) {
+  // if (!bno08x.enableReport(SH2_GYROSCOPE_CALIBRATED, 1000)) {
   //   Serial.println("Could not enable gyroscope");
   // }
 }
@@ -80,6 +80,8 @@ void readIMU() {
           gyro.pitchRate = sensorValue.un.gyroscope.y;
           gyro.yawRate = sensorValue.un.gyroscope.z;
           break;
+          
+
     }
 
 }
@@ -106,23 +108,34 @@ void setup(){
 }
 
 unsigned long lastPrint = 0;
+int printTime = 0;
+
+double derivative = 0;
+double lastAngle = 0;
 void loop(){
   //update the IMU every loop 
   updateIMU();
-
+  
   EVERY_N_MILLIS(PRINT_INTERVAL){
+    derivative = 1000*(angles.roll - lastAngle)/printTime;
+    //readIMU();
     tft.setCursor(0, 0);
     // tft.setTextColor(ST77XX_WHITE, ST77XX_BLACK);
     // tft.println("Euler Angles (deg):");
     // tft.setTextColor(ST77XX_CYAN, ST77XX_BLACK);
-    tft.printf(" Roll: %d    \n", int(angles.roll*RAD_2_DEG));
-    tft.printf("\n\n Time (ms): %d      \n", millis());
+    tft.printf("%.2f    \n", angles.roll*RAD_2_DEG);
+    tft.printf("%.2f   \n", derivative);
+    tft.printf("%d   \n", printTime);
+    printTime = millis()-lastPrint;
+    lastPrint = millis();
+    lastAngle = angles.roll;
+
   }
   
   EVERY_N_MILLIS(100){
-    int printTime = millis()-lastPrint;
-    lastPrint = millis();
-    Serial.printf("Roll: %.1f printTime (ms) %d\n", angles.roll*RAD_2_DEG, printTime);
+    
+    
+    //Serial.printf("Roll: %.1f printTime (ms) %d\n", angles.roll*RAD_2_DEG, printTime);
     // Serial.printf("RollRate: %.2f PitchRate: %.2f YawRate: %.2f\n", gyro.rollRate*RAD_2_DEG, gyro.pitchRate*RAD_2_DEG, gyro.yawRate*RAD_2_DEG);
   }
 }

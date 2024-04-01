@@ -48,7 +48,7 @@
     unsigned long currentTime = micros();
     unsigned long timeDifference = handleMicrosRollover(currentTime);
     double dt = (double)timeDifference / 1000000.0; // Time difference in seconds
-    _alpha = exp(-dt / _tau); // Calculate alpha for low-pass filter
+    _alpha = dt/(_tau+dt); // Calculate alpha for low-pass filter
 
     double error = _setpoint - input;               // Calculate error
     if (_Ki == 0) {
@@ -61,11 +61,11 @@
 
     double derivative = (error - _previousError) / dt; // Derivative term
     
-    derivative = _alpha * _lastDerivative + (1 - _alpha) * derivative; // Apply low-pass filter
-    _lastDerivative = derivative;
+    double filt_derivative = _alpha * derivative+ (1 - _alpha) * _lastDerivative; // Apply low-pass filter
+    _lastDerivative = filt_derivative;
 
     // double output = _Kp * (error + _Ki * _integral + _Kd * derivative); // Calculate pseudo-parallel PID output
-    double output = _Kp * error + _Ki*_integral+ _Kd * derivative; // Calculate true parallel PID output
+    double output = _Kp * error + _Ki*_integral+ _Kd * filt_derivative; // Calculate true parallel PID output
     _previousError = error;
 
     return output;
@@ -76,7 +76,8 @@
     unsigned long currentTime = micros();
     unsigned long timeDifference = handleMicrosRollover(currentTime);
     double dt = (double)timeDifference / 1000000.0; // Time difference in seconds
-    _alpha = exp(-dt / _tau); // Calculate alpha for low-pass filter
+
+    _alpha = dt/(_tau+dt); // Calculate alpha for low-pass filter
 
     double error = _setpoint - input;               // Calculate error
     //integral windup protection
@@ -89,10 +90,10 @@
       }                // Integral term
 
     // double output = _Kp * (error + _Ki * _integral + _Kd * derivative); // Calculate pseudo-parallel PID output
-    derivative = _alpha * _lastDerivative + (1 - _alpha) * derivative; // Apply low-pass filter
-    _lastDerivative = derivative;
+    double filt_derivative = _alpha * derivative + (1 - _alpha) * _lastDerivative; // Apply low-pass filter
+    _lastDerivative = filt_derivative;
 
-    double output = _Kp * error + _Ki*_integral + _Kd * derivative; // Calculate true parallel PID output
+    double output = _Kp * error + _Ki*_integral + _Kd * filt_derivative; // Calculate true parallel PID output
     _previousError = error;
 
     return output;

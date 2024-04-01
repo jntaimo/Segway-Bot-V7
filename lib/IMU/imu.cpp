@@ -30,7 +30,7 @@ void IMU::setReports() {
     if (! bno08x.enableReport(SH2_GAME_ROTATION_VECTOR, 1000)) {
         if (IMU_DEBUG) Serial.println("Could not enable game vector");
     }
-    // if (!bno08x.enableReport(SH2_GYROSCOPE_CALIBRATED, 1500)) {
+    // if (!bno08x.enableReport(SH2_GYROSCOPE_CALIBRATED, 1000)) {
     //     if (IMU_DEBUG) Serial.println("Could not enable gyroscope");
     // }
 }
@@ -58,11 +58,11 @@ void IMU::readIMU() {
             eulerAngles =  ToEulerAngles(quatReading);
         break;
 
-        case SH2_GYROSCOPE_CALIBRATED:
-            gyroReadings.rollRate = sensorValue.un.gyroscope.x;
-            gyroReadings.pitchRate = sensorValue.un.gyroscope.y;
-            gyroReadings.yawRate= sensorValue.un.gyroscope.z;
-        break;
+        // case SH2_GYROSCOPE_CALIBRATED:
+        //     gyroReadings.rollRate = sensorValue.un.gyroscope.x;
+        //     gyroReadings.pitchRate = sensorValue.un.gyroscope.y;
+        //     gyroReadings.yawRate= sensorValue.un.gyroscope.z;
+        // break;
     }  
 }
 

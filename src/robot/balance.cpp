@@ -30,13 +30,13 @@ Gains motorGains({0, 0, 0, 0});
 Gains observerGains({0, 0, 0, 0});
 
 // PID controllers
-PID balancePID(balanceGains.kp, balanceGains.ki, balanceGains.kd, 0, 0.01, false);  
+PID balancePID(balanceGains.kp, balanceGains.ki, balanceGains.kd, 0, 0.0, false);  
 PID leftMotorPID(motorGains.kp, motorGains.ki, motorGains.kd, 0.0, 0.1, false); 
 PID rightMotorPID(observerGains.kp, observerGains.ki, observerGains.kd, 0.0, 0.1, false); 
 
 // Encoder velocity readers
-EncoderVelocity leftEncoder(LEFT_ENCODER_A_PIN, LEFT_ENCODER_B_PIN, CPR_1620_RPM);
-EncoderVelocity rightEncoder(RIGHT_ENCODER_A_PIN, RIGHT_ENCODER_B_PIN, CPR_1620_RPM);
+EncoderVelocity leftEncoder(LEFT_ENCODER_A_PIN, LEFT_ENCODER_B_PIN, CPR_312_RPM);
+EncoderVelocity rightEncoder(RIGHT_ENCODER_A_PIN, RIGHT_ENCODER_B_PIN, CPR_312_RPM);
 
 // Motor drivers
 MotorDriver leftMotor(DIR1, PWM1, 0);
@@ -56,13 +56,16 @@ void setup(){
     potsSetup();
     leftMotor.setup();
     rightMotor.setup();
-    // tft.setTextWrap(false);
-    // tft.setTextColor(ST77XX_WHITE, ST77XX_BLACK);
-    // tft.setTextSize(2);
+    tft.setTextWrap(false);
+    tft.setTextColor(ST77XX_WHITE, ST77XX_BLACK);
+    tft.setTextSize(3);
+    tft.setCursor(0,0);
+    tft.println("Balance Boi");
 
 }
 
 void loop(){
+    imu.update();
     //update the setponts at 100 Hz
     EVERY_N_MILLIS(100){
         balanceSetpoint = 0;
@@ -73,17 +76,17 @@ void loop(){
         //update 
         bool newPotReading  = updatePIDParams(balanceGains);
         if (newPotReading){
-            balancePID.setParallelTunings(balanceGains.kp, balanceGains.ki, balanceGains.kd, 0.3, -2, 2);
+            balancePID.setParallelTunings(balanceGains.kp, balanceGains.ki, balanceGains.kd, BALANCE_TAU, -0.5, 0.5);
         }
     }
 
     //update IMU at 1kHz
     EVERY_N_MILLIS(1){
-        imu.update();
+        
     }
     
     // Update PID at 1Kz
-    EVERY_N_MILLIS(1){
+    EVERY_N_MICROS(400){
         //read encoders
         // float leftPosition = leftEncoder.getPosition(); //rad
         // float rightPosition = -rightEncoder.getPosition(); //rad
@@ -92,7 +95,7 @@ void loop(){
 
         //calculate control effort
         EulerAngles angles = imu.getEulerAngles();
-        // GyroReadings gyro = imu.getGyroReadings();
+        //GyroReadings gyro = imu.getGyroReadings();
 
         float absoluteTiltAngle = angles.roll;
         float relativeTiltAngle = absoluteTiltAngle - balanceGains.trim;
@@ -123,14 +126,21 @@ void loop(){
             leftMotor.drive(motorLSetpoint);
             rightMotor.drive(-motorRSetpoint);
         }
+        
     }
 
     // Print values at 10Hz
-    EVERY_N_MILLIS(100) {
+    EVERY_N_MILLIS(240) {
         // Serial.printf("kp: %.2f, ki: %.2f, kd: %.2f, trim: %.2f", balanceGains.kp, balanceGains.ki, balanceGains.kd, balanceGains.trim);
-        // Serial.printf(" Setpoint: %.2f, Angle: %.2f, Control Effort: %.2f\n", balanceSetpoint, imu.getEulerAngles().roll*RAD_2_DEG, balanceControlEffort);
+        //Serial.printf(" Setpoint: %.2f, Angle: %.2f, Control Effort: %.2f\n", balanceSetpoint, imu.getEulerAngles().roll*RAD_2_DEG, balanceControlEffort);
         // Print encoder readings
-        // tft.setCursor(0, 0);
+        tft.setCursor(0, 0);
+        tft.printf("%.2f    \n", balanceGains.kp);
+        tft.printf("%.2f    \n", balanceGains.ki);
+        tft.printf("%.2f    \n", balanceGains.kd);
+        tft.printf("%.2f    \n", balanceGains.trim);
+        //tft.printf("%.2f    \n", balanceSetpoint);
+        //tft.printf("%.2f    \n", imu.getEulerAngles().roll*RAD_2_DEG);
         // tft.println("Pot Readings");
         // tft.setTextColor(ST77XX_YELLOW, ST77XX_BLACK);
         // tft.printf("  Kp:  %.3f", balanceGains.kp);
