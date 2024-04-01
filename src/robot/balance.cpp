@@ -7,6 +7,7 @@
 #include "EncoderVelocity.h"
 #include "display.h"
 #include "MotorDriver.h"
+#include "FIRFilter.h"
 #include <UMS3.h>
 
 //whether the robot has fallen over
@@ -49,6 +50,12 @@ IMU imu(IMU_RST, IMU_CS, IMU_INT);
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 
 
+//time that the last PID loop was called
+unsigned long lastPIDTime = 0;
+long PIDActualInterval = 0; //actual time between PID loops in microseconds
+FIRFilter PIDIntervalFilter(32); //filter for the PID loop interval
+long averagePIDInterval = 0; //average time between PID loops in microseconds
+
 void setup(){
     Serial.begin();
     imu.setup();
@@ -60,33 +67,29 @@ void setup(){
     tft.setTextColor(ST77XX_WHITE, ST77XX_BLACK);
     tft.setTextSize(3);
     tft.setCursor(0,0);
-    tft.println("Balance Boi");
+    // tft.println("Balance Boi");
 
 }
 
 void loop(){
-    imu.update();
+    //imu.update();
     //update the setponts at 100 Hz
-    EVERY_N_MILLIS(100){
-        balanceSetpoint = 0;
-        turnSpeed = 0;
-    }
+    // EVERY_N_MILLIS(100){
+    //     balanceSetpoint = 0;
+    //     turnSpeed = 0;
+    // }
     //update gains at 5 Hz
-    EVERY_N_MILLIS(200){
+    EVERY_N_MILLIS(100){
         //update 
         bool newPotReading  = updatePIDParams(balanceGains);
         if (newPotReading){
-            balancePID.setParallelTunings(balanceGains.kp, balanceGains.ki, balanceGains.kd, BALANCE_TAU, -0.5, 0.5);
+            balancePID.setParallelTunings(balanceGains.kp, balanceGains.ki, balanceGains.kd, DERIVATIVE_TAU, -0.2, 0.2);
         }
-    }
-
-    //update IMU at 1kHz
-    EVERY_N_MILLIS(1){
-        
     }
     
     // Update PID at 1Kz
     EVERY_N_MICROS(400){
+        imu.readIMU();
         //read encoders
         // float leftPosition = leftEncoder.getPosition(); //rad
         // float rightPosition = -rightEncoder.getPosition(); //rad
@@ -126,11 +129,13 @@ void loop(){
             leftMotor.drive(motorLSetpoint);
             rightMotor.drive(-motorRSetpoint);
         }
-        
+        // PIDActualInterval = micros() - lastPIDTime; 
+        // lastPIDTime = micros();
+        // averagePIDInterval = PIDIntervalFilter.update(PIDActualInterval);
     }
 
-    // Print values at 10Hz
-    EVERY_N_MILLIS(240) {
+    // Print values at 2Hz
+    EVERY_N_MILLIS(500) {
         // Serial.printf("kp: %.2f, ki: %.2f, kd: %.2f, trim: %.2f", balanceGains.kp, balanceGains.ki, balanceGains.kd, balanceGains.trim);
         //Serial.printf(" Setpoint: %.2f, Angle: %.2f, Control Effort: %.2f\n", balanceSetpoint, imu.getEulerAngles().roll*RAD_2_DEG, balanceControlEffort);
         // Print encoder readings
@@ -139,6 +144,7 @@ void loop(){
         tft.printf("%.2f    \n", balanceGains.ki);
         tft.printf("%.2f    \n", balanceGains.kd);
         tft.printf("%.2f    \n", balanceGains.trim);
+        //tft.printf("%d    \n", PIDActualInterval);
         //tft.printf("%.2f    \n", balanceSetpoint);
         //tft.printf("%.2f    \n", imu.getEulerAngles().roll*RAD_2_DEG);
         // tft.println("Pot Readings");

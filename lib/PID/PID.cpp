@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "PID.h"
 
+
   // Constructor: Initializes the PID controller with the given parameters
   PID::PID(double Kp, double Ki, double Kd, double setpoint, double tau, bool serial)
     : _setpoint(setpoint), _previousError(0), _integral(0), _lastDerivative(0), _alpha(1), _integralMin(0), _integralMax(0), _tau(tau) {
@@ -61,7 +62,7 @@
 
     double derivative = (error - _previousError) / dt; // Derivative term
     
-    double filt_derivative = _alpha * derivative+ (1 - _alpha) * _lastDerivative; // Apply low-pass filter
+    double filt_derivative = _alpha * derivative + (1 - _alpha) * _lastDerivative; // Apply low-pass filter
     _lastDerivative = filt_derivative;
 
     // double output = _Kp * (error + _Ki * _integral + _Kd * derivative); // Calculate pseudo-parallel PID output
