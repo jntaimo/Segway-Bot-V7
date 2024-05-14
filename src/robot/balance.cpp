@@ -196,5 +196,6 @@ bool updatePIDParams(Gains &gains){
 //returns true if the angle is within the safe range
 //This is useful for preventing the robot from tipping over
 bool safeAngle(float angle, float trim, float maxSafeAngle){
+    //if the angle is too high, the robot is in danger of tipping over
     return (angle > -maxSafeAngle + trim) && (angle < maxSafeAngle + trim);
 }
